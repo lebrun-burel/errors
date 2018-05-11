@@ -1,15 +1,11 @@
-'use strict';
+const debug = require('debug')('@feathersjs/errors');
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var debug = require('debug')('@feathersjs/errors');
-
-function FeathersError(msg, name, code, className, data) {
+function FeathersError (msg, name, code, className, data) {
   msg = msg || 'Error';
 
-  var errors = void 0;
-  var message = void 0;
-  var newData = void 0;
+  let errors;
+  let message;
+  let newData;
 
   if (msg instanceof Error) {
     message = msg.message || 'Error';
@@ -18,12 +14,10 @@ function FeathersError(msg, name, code, className, data) {
     if (msg.errors) {
       errors = msg.errors;
     }
-  } else if ((typeof msg === 'undefined' ? 'undefined' : _typeof(msg)) === 'object') {
-    // Support plain old objects
+  } else if (typeof msg === 'object') { // Support plain old objects
     message = msg.message || 'Error';
     data = msg;
-  } else {
-    // message is just a string
+  } else { // message is just a string
     message = msg;
   }
 
@@ -55,17 +49,17 @@ function FeathersError(msg, name, code, className, data) {
   this.data = newData;
   this.errors = errors || {};
 
-  debug(this.name + '(' + this.code + '): ' + this.message);
+  debug(`${this.name}(${this.code}): ${this.message}`);
   debug(this.errors);
 
   if (Error.captureStackTrace) {
     Error.captureStackTrace(this, FeathersError);
   } else {
-    this.stack = new Error().stack;
+    this.stack = (new Error()).stack;
   }
 }
 
-function inheritsFrom(Child, Parent) {
+function inheritsFrom (Child, Parent) {
   Child.prototype = Object.create(Parent.prototype);
   Child.prototype.constructor = Child;
 }
@@ -75,7 +69,7 @@ inheritsFrom(FeathersError, Error);
 // NOTE (EK): A little hack to get around `message` not
 // being included in the default toJSON call.
 Object.defineProperty(FeathersError.prototype, 'toJSON', {
-  value: function value() {
+  value: function () {
     return {
       name: this.name,
       message: this.message,
@@ -88,135 +82,135 @@ Object.defineProperty(FeathersError.prototype, 'toJSON', {
 });
 
 // 400 - Bad Request
-function BadRequest(message, data) {
+function BadRequest (message, data) {
   FeathersError.call(this, message, 'BadRequest', 400, 'bad-request', data);
 }
 
 inheritsFrom(BadRequest, FeathersError);
 
 // 401 - Not Authenticated
-function NotAuthenticated(message, data) {
+function NotAuthenticated (message, data) {
   FeathersError.call(this, message, 'NotAuthenticated', 401, 'not-authenticated', data);
 }
 
 inheritsFrom(NotAuthenticated, FeathersError);
 
 // 402 - Payment Error
-function PaymentError(message, data) {
+function PaymentError (message, data) {
   FeathersError.call(this, message, 'PaymentError', 402, 'payment-error', data);
 }
 
 inheritsFrom(PaymentError, FeathersError);
 
 // 403 - Forbidden
-function Forbidden(message, data) {
+function Forbidden (message, data) {
   FeathersError.call(this, message, 'Forbidden', 403, 'forbidden', data);
 }
 
 inheritsFrom(Forbidden, FeathersError);
 
 // 404 - Not Found
-function NotFound(message, data) {
+function NotFound (message, data) {
   FeathersError.call(this, message, 'NotFound', 404, 'not-found', data);
 }
 
 inheritsFrom(NotFound, FeathersError);
 
 // 405 - Method Not Allowed
-function MethodNotAllowed(message, data) {
+function MethodNotAllowed (message, data) {
   FeathersError.call(this, message, 'MethodNotAllowed', 405, 'method-not-allowed', data);
 }
 
 inheritsFrom(MethodNotAllowed, FeathersError);
 
 // 406 - Not Acceptable
-function NotAcceptable(message, data) {
+function NotAcceptable (message, data) {
   FeathersError.call(this, message, 'NotAcceptable', 406, 'not-acceptable', data);
 }
 
 inheritsFrom(NotAcceptable, FeathersError);
 
 // 408 - Timeout
-function Timeout(message, data) {
+function Timeout (message, data) {
   FeathersError.call(this, message, 'Timeout', 408, 'timeout', data);
 }
 
 inheritsFrom(Timeout, FeathersError);
 
 // 409 - Conflict
-function Conflict(message, data) {
+function Conflict (message, data) {
   FeathersError.call(this, message, 'Conflict', 409, 'conflict', data);
 }
 
 inheritsFrom(Conflict, FeathersError);
 
 // 411 - Length Required
-function LengthRequired(message, data) {
+function LengthRequired (message, data) {
   FeathersError.call(this, message, 'LengthRequired', 411, 'length-required', data);
 }
 
 inheritsFrom(LengthRequired, FeathersError);
 
 // 422 Unprocessable
-function Unprocessable(message, data) {
+function Unprocessable (message, data) {
   FeathersError.call(this, message, 'Unprocessable', 422, 'unprocessable', data);
 }
 
 inheritsFrom(Unprocessable, FeathersError);
 
 // 429 Too Many Requests
-function TooManyRequests(message, data) {
+function TooManyRequests (message, data) {
   FeathersError.call(this, message, 'TooManyRequests', 429, 'too-many-requests', data);
 }
 
 inheritsFrom(TooManyRequests, FeathersError);
 
 // 500 - General Error
-function GeneralError(message, data) {
+function GeneralError (message, data) {
   FeathersError.call(this, message, 'GeneralError', 500, 'general-error', data);
 }
 
 inheritsFrom(GeneralError, FeathersError);
 
 // 501 - Not Implemented
-function NotImplemented(message, data) {
+function NotImplemented (message, data) {
   FeathersError.call(this, message, 'NotImplemented', 501, 'not-implemented', data);
 }
 
 inheritsFrom(NotImplemented, FeathersError);
 
 // 502 - Bad Gateway
-function BadGateway(message, data) {
+function BadGateway (message, data) {
   FeathersError.call(this, message, 'BadGateway', 502, 'bad-gateway', data);
 }
 
 inheritsFrom(BadGateway, FeathersError);
 
 // 503 - Unavailable
-function Unavailable(message, data) {
+function Unavailable (message, data) {
   FeathersError.call(this, message, 'Unavailable', 503, 'unavailable', data);
 }
 
 inheritsFrom(Unavailable, FeathersError);
 
-var errors = {
-  FeathersError: FeathersError,
-  BadRequest: BadRequest,
-  NotAuthenticated: NotAuthenticated,
-  PaymentError: PaymentError,
-  Forbidden: Forbidden,
-  NotFound: NotFound,
-  MethodNotAllowed: MethodNotAllowed,
-  NotAcceptable: NotAcceptable,
-  Timeout: Timeout,
-  Conflict: Conflict,
-  LengthRequired: LengthRequired,
-  Unprocessable: Unprocessable,
-  TooManyRequests: TooManyRequests,
-  GeneralError: GeneralError,
-  NotImplemented: NotImplemented,
-  BadGateway: BadGateway,
-  Unavailable: Unavailable,
+const errors = {
+  FeathersError,
+  BadRequest,
+  NotAuthenticated,
+  PaymentError,
+  Forbidden,
+  NotFound,
+  MethodNotAllowed,
+  NotAcceptable,
+  Timeout,
+  Conflict,
+  LengthRequired,
+  Unprocessable,
+  TooManyRequests,
+  GeneralError,
+  NotImplemented,
+  BadGateway,
+  Unavailable,
   400: BadRequest,
   401: NotAuthenticated,
   402: PaymentError,
@@ -235,19 +229,21 @@ var errors = {
   503: Unavailable
 };
 
-function convert(error) {
+function convert (error) {
   if (!error) {
     return error;
   }
 
-  var FeathersError = errors[error.name];
-  var result = FeathersError ? new FeathersError(error.message, error.data) : new Error(error.message || error);
+  const FeathersError = errors[error.name];
+  const result = FeathersError
+    ? new FeathersError(error.message, error.data)
+    : new Error(error.message || error);
 
-  if ((typeof error === 'undefined' ? 'undefined' : _typeof(error)) === 'object') {
+  if (typeof error === 'object') {
     Object.assign(result, error);
   }
 
   return result;
 }
 
-module.exports = Object.assign({ convert: convert }, errors);
+module.exports = Object.assign({ convert }, errors);

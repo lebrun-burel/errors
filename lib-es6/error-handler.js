@@ -1,17 +1,13 @@
-'use strict';
+const path = require('path');
+const errors = require('./index');
 
-var path = require('path');
-var errors = require('./index');
-
-var defaults = {
+const defaults = {
   public: path.resolve(__dirname, 'public'),
   logger: console
 };
-var defaultHtmlError = path.resolve(defaults.public, 'default.html');
+const defaultHtmlError = path.resolve(defaults.public, 'default.html');
 
-module.exports = function () {
-  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+module.exports = function (options = {}) {
   options = Object.assign({}, defaults, options);
 
   if (typeof options.html === 'undefined') {
@@ -33,7 +29,7 @@ module.exports = function () {
     }
 
     if (error.type !== 'FeathersError') {
-      var oldError = error;
+      let oldError = error;
       error = new errors.GeneralError(oldError.message, {
         errors: oldError.errors
       });
@@ -44,13 +40,13 @@ module.exports = function () {
     }
 
     error.code = !isNaN(parseInt(error.code, 10)) ? parseInt(error.code, 10) : 500;
-    var formatter = {};
+    const formatter = {};
 
     // If the developer passed a custom function for ALL html errors
     if (typeof options.html === 'function') {
       formatter['text/html'] = options.html;
     } else {
-      var file = options.html[error.code];
+      let file = options.html[error.code];
       if (!file) {
         file = options.html.default || defaultHtmlError;
       }
@@ -69,7 +65,7 @@ module.exports = function () {
     if (typeof options.json === 'function') {
       formatter['application/json'] = options.json;
     } else {
-      var handler = options.json[error.code] || options.json.default;
+      let handler = options.json[error.code] || options.json.default;
       // If the developer passed a custom function for individual json errors
       if (typeof handler === 'function') {
         formatter['application/json'] = handler;
@@ -80,7 +76,7 @@ module.exports = function () {
         }
 
         formatter['application/json'] = function () {
-          var output = Object.assign({}, error.toJSON());
+          let output = Object.assign({}, error.toJSON());
 
           if (process.env.NODE_ENV === 'production') {
             delete output.stack;
@@ -94,8 +90,8 @@ module.exports = function () {
 
     res.status(error.code);
 
-    var contentType = req.headers['content-type'] || '';
-    var accepts = req.headers.accept || '';
+    const contentType = req.headers['content-type'] || '';
+    const accepts = req.headers.accept || '';
 
     // by default just send back json
     if (contentType.indexOf('json') !== -1 || accepts.indexOf('json') !== -1) {
